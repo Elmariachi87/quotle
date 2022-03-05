@@ -9,25 +9,33 @@ const twitterBtn = document.getElementById('twitter')
 const newQuoteBtn = document.getElementById('new-quote')
 const loader = document.getElementById('loader');
 
-
 let apiQuotes = [];
 
-// Show new quote
-
-// Show loading
-function loading() {
+function showLoadingSpinner() {
     loader.hidden = false;
     quoteContainer.hidden = true;
 }
 
-// Hide loading
-function complete() {
+function removeLoadingSpinner() {
     quoteContainer.hidden = false;
     loader.hidden = true;
 }
 
+async function getQuotes() {
+    showLoadingSpinner();
+    const apiUrl = 'https://type.fit/api/quotes';
+    // This data won't be set until it has received a response from API. 'await' makes variable wait before being declared - so it doesn't return undefined.
+    try {
+        const response = await fetch(apiUrl);
+        apiQuotes = await response.json();
+        newQuote();
+    } catch (error) {
+
+    }
+}
+
 function newQuote() {
-    loading();
+    showLoadingSpinner();
     //Pick a random quote from API array
     const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
 
@@ -45,20 +53,7 @@ function newQuote() {
     }
     // Set quote, hide loader
     quoteText.textContent = quote.text;
-    complete();
-}
-
-async function getQuotes() {
-    loading();
-    const apiUrl = 'https://type.fit/api/quotes';
-    // This data won't be set until it has received a response from API. 'await' makes variable wait before being declared - so it doesn't return undefined.
-    try {
-        const response = await fetch(apiUrl);
-        apiQuotes = await response.json();
-        newQuote();
-    } catch (error) {
-        //Catch error here
-    }
+    removeLoadingSpinner();
 }
 
 // Tweet quote
